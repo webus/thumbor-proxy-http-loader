@@ -14,7 +14,7 @@ from thumbor.utils import logger
 from tornado.concurrent import return_future
 
 
-def _normalize_url(url):
+def _normalize_url(context, url):
     url = unquote(url)
     base_url = context.config.DEFAULT_IMAGE_DOWNLOAD_HOSTNAME
     url = os.path.join(base_url, url)
@@ -22,7 +22,7 @@ def _normalize_url(url):
 
 
 def validate(context, url, normalize_url_func=_normalize_url):
-    url = normalize_url_func(url)
+    url = normalize_url_func(context, url)
     res = urlparse(url)
 
     if not res.hostname:
@@ -81,7 +81,7 @@ def load_sync(context, url, callback, normalize_url_func):
     if user_agent is None:
         user_agent = context.config.HTTP_LOADER_DEFAULT_USER_AGENT
 
-    url = normalize_url_func(url)
+    url = normalize_url_func(context, url)
     req = tornado.httpclient.HTTPRequest(
         url=encode(url),
         connect_timeout=context.config.HTTP_LOADER_CONNECT_TIMEOUT,
